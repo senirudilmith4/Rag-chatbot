@@ -2,14 +2,9 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional
 import chromadb
 from chromadb.config import Settings
-# from MVP.backend.utils.logger import get_logger
 
-
-# Determine the database path relative to this script
 SCRIPT_DIR = Path(__file__).resolve().parent
 CHROMA_PATH = "data/chroma_db"
-
-
 
 
 class ChromaVectorStore:
@@ -77,30 +72,3 @@ class ChromaVectorStore:
         
 ChromaVectorStore()
 
-# client = chromadb.Client(
-#     Settings(
-#         persist_directory="data/chroma_db",
-#         anonymized_telemetry=False,
-#         is_persistent=True
-#     )
-# )
-
-# collection = client.get_or_create_collection(
-#     name="docs",
-#     metadata={"hnsw:space": "cosine"}
-# )
-
-# # Example ingestion
-# collection.upsert(
-#     ids=["doc1"],
-#     documents=["This is a test document."],
-#     metadatas=[{"source": "test"}],
-#     embeddings=[[0.1, 0.2, 0.3]]  # must match embedding dimension
-# )
-# # Now this will delete the persisted collection
-
-#print("Existing collections:", client.list_collections())  # Check existing collections after deletion
-# recreate collection
-# collection = client.create_collection(name="university_docs")
-
-# client.delete_collection(name="docs")

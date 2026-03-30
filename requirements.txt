@@ -1,4 +1,11 @@
-streamlit>=1.36.0
-pandas>=2.0.0
-numpy>=1.24.0
-
+streamlit
+fastapi
+uvicorn
+inngest
+python-dotenv
+chromadb
+google-genai
+pydantic
+ollama
+llama-index
+sentence-transformers

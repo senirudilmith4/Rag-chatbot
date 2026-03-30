@@ -2,12 +2,9 @@ import asyncio
 import logging
 import inngest
 import inngest.fast_api  # Automatically exposes Inngest endpoints inside FastAPI app
-import uuid
-from fastapi import FastAPI, HTTPException, Header
+from fastapi import FastAPI
 from inngest.experimental import ai  # Simplifies calling LLMs, managing retries, background AI execution
 from dotenv import load_dotenv
-
-# from app.api.routes.ask import router as ask_router
 from ingestion.load_docs import DOCS_PATH, load_pdf,chunk_texts, embed_texts,sample_texts_for_metadata,chunk_id
 from chroma_db.vector_db import ChromaVectorStore
 from app.schemas.custom_types import RAGChunkAndSrc, RAGUpsertResult, RAGSearchResult, RAGQueryResult
@@ -164,7 +161,7 @@ async def query_pdf_ai(ctx: inngest.Context):
  
         return RAGSearchResult(contexts=results["contexts"], sources=results["sources"])
  
-    # ---- pull inputs from event ----
+    # pull inputs from event 
     question: str = ctx.event.data["question"]
     top_k: int = ctx.event.data.get("top_k", 10)
  
@@ -252,28 +249,3 @@ inngest.fast_api.serve(app,inngest_client,[ingest_document,query_pdf_ai])  # Bri
 def health_check():
     return {"status": "backend is running"} # defines a simple endpoint to check if the backend is running. When you access /health, it will return a JSON response indicating the status of the backend.
 
-
-#  { "data":{
-#    "question": "What are the Learning Outcomes On successful completion of this Module 2607 "
-#    }
-#  }
-
-
-# { "data":{
-#    "pdf_path": "D:\\OneDrive\\Documents\\IIT\\STAGE 02\\DSGP\\Domain AI\\MVP\\backend\\data\\docs\\Module CM2607 Advanced Mathematics for Data Science.pdf"
-#    }
-#  }
-
-
-
-# rouge , bleu testing, f1 score llm testing
-
-# Traditional NLP Metrics
-    # BLEU,ROUGE-L,F1 Score
-
-# RAG-Specific Metrics
-    # Retrieval accuracy, Context relevance, Hallucination rate
-
-# Example statement in thesis:
-# The system was evaluated using BLEU, ROUGE-L, and F1 scores to measure textual similarity between generated responses and reference answers. 
-# Additionally, retrieval accuracy and hallucination tests were conducted to assess the effectiveness of the RAG pipeline.

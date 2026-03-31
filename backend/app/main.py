@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 import inngest
 import inngest.fast_api  # Automatically exposes Inngest endpoints inside FastAPI app
 from fastapi import FastAPI
@@ -8,17 +9,27 @@ from dotenv import load_dotenv
 from ingestion.load_docs import DOCS_PATH, load_pdf,chunk_texts, embed_texts,sample_texts_for_metadata,chunk_id
 from chroma_db.vector_db import ChromaVectorStore
 from app.schemas.custom_types import RAGChunkAndSrc, RAGUpsertResult, RAGSearchResult, RAGQueryResult
-from app.OllamaAdapter import OllamaAdapter
+from backend.app.geminiAdapter import OllamaAdapter
 from app.schemas.meta_detec import detect_doc_type_and_metadata, extract_filters
+from app.geminiAdapter import GeminiAdapter
+
 
 load_dotenv()  # Load environment variables from .env file
 logger = logging.getLogger("uvicorn")
 
+api_key = os.getenv("GEMINI_API_KEY")
+
+client = genai.Client(api_key=api_key)
+model="gemini-2.5-flash"
+
+
 inngest_client = inngest.Inngest(   # Initialize Inngest client for handling serverless functions and AI tasks
     app_id="rag_api",               # Unique identifier for Inngest application
     logger = logging.getLogger("uvicorn"),
-    is_production=False,
-    serializer=inngest.PydanticSerializer()
+    is_production=os.getenv("INNGEST_ENV") == "production", # Set production mode based on environment variable
+    serializer=inngest.PydanticSerializer(),
+    event_key=os.getenv("INNGEST_EVENT_KEY"),
+    signing_key=os.getenv("INNGEST_SIGNING_KEY")
 )
 app = FastAPI(                # creates a web server
     title="LLM-RAG API", 
@@ -227,10 +238,11 @@ async def query_pdf_ai(ctx: inngest.Context):
         Write the answer now.
         """.strip()
  
+    gemini = GeminiAdapter()
     # Step 4: generate answer via Ollama
     answer = await ctx.step.run(
         "llm-answer",
-        lambda: asyncio.to_thread(OllamaAdapter().generate, prompt),
+        lambda: asyncio.to_thread(gemini.generate, prompt),
     )
  
     logger.info("Query complete — %d contexts used", len(found.contexts))
@@ -249,3 +261,6 @@ inngest.fast_api.serve(app,inngest_client,[ingest_document,query_pdf_ai])  # Bri
 def health_check():
     return {"status": "backend is running"} # defines a simple endpoint to check if the backend is running. When you access /health, it will return a JSON response indicating the status of the backend.
 
+@app.get("/")
+def home():
+    return {"message": "Chatbot running"}

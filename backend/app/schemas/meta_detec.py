@@ -1,8 +1,8 @@
 import json
 import logging
-from app.OllamaAdapter import OllamaAdapter
+from app.geminiAdapter import GeminiAdapter
 
-llm = OllamaAdapter()
+llm = GeminiAdapter()  # Initialize a single Gemini client instance to be reused across functions
 
 # Single source of truth for doc_type values.
 # Must match across detect_doc_type_and_metadata, extract_filters, and CHUNK_SIZES in load_docs.py.
@@ -91,7 +91,7 @@ Output: null
 Now extract filters for:
 {question}
 """
-    raw = OllamaAdapter().generate(prompt)
+    raw = llm.generate(prompt)
 
     try:
         cleaned = raw.strip().replace("```json", "").replace("```", "")

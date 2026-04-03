@@ -9,7 +9,6 @@ from dotenv import load_dotenv
 from ingestion.load_docs import DOCS_PATH, load_pdf,chunk_texts, embed_texts,sample_texts_for_metadata,chunk_id
 from chroma_db.vector_db import ChromaVectorStore
 from app.schemas.custom_types import RAGChunkAndSrc, RAGUpsertResult, RAGSearchResult, RAGQueryResult
-from backend.app.geminiAdapter import OllamaAdapter
 from app.schemas.meta_detec import detect_doc_type_and_metadata, extract_filters
 from app.geminiAdapter import GeminiAdapter
 
@@ -17,10 +16,7 @@ from app.geminiAdapter import GeminiAdapter
 load_dotenv()  # Load environment variables from .env file
 logger = logging.getLogger("uvicorn")
 
-api_key = os.getenv("GEMINI_API_KEY")
 
-client = genai.Client(api_key=api_key)
-model="gemini-2.5-flash"
 
 
 inngest_client = inngest.Inngest(   # Initialize Inngest client for handling serverless functions and AI tasks

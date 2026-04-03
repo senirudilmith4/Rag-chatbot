@@ -1,23 +1,21 @@
-import ollama
 import os
+from google import genai
+from dotenv import load_dotenv
 
-class OllamaAdapter:
+load_dotenv()  # Load environment variables from .env file
 
-    def __init__(self):
-        self.model = os.getenv("OLLAMA_MODEL", "llama3.2")
-        self.base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+class GeminiAdapter: 
 
+    def __init__(self):   # Initialize the Gemini client with API key and model configuration
+        api_key = os.getenv("GEMINI_API_KEY")
+        if not api_key:
+            raise ValueError("GEMINI_API_KEY is not set")
+        self.model = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+        self.client = genai.Client(api_key=api_key)
+        
     def generate(self, prompt: str) -> str:
-        if not self.model:
-            raise ValueError("OLLAMA_MODEL is not set")
-
-        response = ollama.chat(
+         response = self.client.models.generate_content(
             model=self.model,
-            messages=[{"role": "user", "content": prompt}],
-            options={
-                "temperature": float(os.getenv("TEMPERATURE", 0.2)),
-                "num_predict": int(os.getenv("MAX_TOKENS", 1024))
-            }
+            contents=prompt
         )
-
-        return response["message"]["content"]
+         return response.text

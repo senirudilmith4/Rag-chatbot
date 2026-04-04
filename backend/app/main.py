@@ -12,7 +12,22 @@ from app.schemas.custom_types import RAGChunkAndSrc, RAGUpsertResult, RAGSearchR
 from app.schemas.meta_detec import detect_doc_type_and_metadata
 from app.services.query_service import run_query
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+from pathlib import Path
 
+app = FastAPI(                # creates a web server
+    title="LLM-RAG API", 
+    version="1.0.0"
+    )   
+
+BASE_DIR = Path(__file__).parent.parent.parent
+
+app.mount("/static", StaticFiles(directory=BASE_DIR / "frontend"), name="static")
+
+@app.get("/")
+def serve_frontend():
+    return FileResponse(BASE_DIR / "frontend" / "index.html")
 
 
 load_dotenv()  # Load environment variables from .env file
@@ -28,10 +43,7 @@ inngest_client = inngest.Inngest(   # Initialize Inngest client for handling ser
     signing_key=os.getenv("INNGEST_SIGNING_KEY"),
 )
 
-app = FastAPI(                # creates a web server
-    title="LLM-RAG API", 
-    version="1.0.0"
-    )     
+  
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # tighten this in production

@@ -60,7 +60,7 @@ PDFs in data/docs/
 | LLM | Google Gemini 2.5 Flash |
 | Vector Store | ChromaDB (persistent) |
 | Job Orchestration | Inngest |
-| Frontend | Python (`app.py` + `rag_client.py`) |
+| Frontend | HTMl, CSS, Vanilla JS |
 | Deployment | Render |
 
 ---

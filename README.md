@@ -87,8 +87,9 @@ RAG-CHATBOT/
 │       ├── __init__.py
 │       └── load_docs.py              # PDF loading, chunking, embedding, chunk ID utilities
 ├── frontend/
-│   ├── app.py                        # Frontend entry point
-│   └── rag_client.py                 # Client for communicating with the backend API
+│   ├── index.html
+│   ├── app.js                      
+│   └── style.css                 
 ├── venv/                             # Virtual environment (not committed)
 ├── .env                              # Environment variables (not committed)
 ├── .gitignore
